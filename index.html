@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Study Timer + Music</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="reconnect" class="banner banner-alert" hidden>
+    <strong>Not saving to your file right now.</strong>
+    Chrome needs your OK to keep saving to <strong id="reconnect-name"></strong>.
+    (Your changes are still saved in this browser.)
+    <button type="button" class="btn btn-small" id="reconnect-btn">Reconnect</button>
+  </div>
+  <div id="error" class="banner banner-error" hidden></div>
+  <div id="notice" class="banner banner-notice" hidden></div>
+  <div id="times-up" class="banner banner-alert" hidden role="alert">
+    <strong>Game time's up!</strong> Study more to earn more.
+    <button type="button" class="btn btn-small" id="times-up-close">Dismiss</button>
+  </div>
+
+  <main>
+    <header class="page-header">
+      <h1>Study Timer + Music</h1>
+      <p class="muted" id="today-line"></p>
+    </header>
+
+    <div class="spend">
+      <span class="muted">Spend game time on</span>
+      <div class="seg" role="group" aria-label="Spend game time on">
+        <button type="button" class="seg-btn" data-spend="game">🎮 Game</button>
+        <button type="button" class="seg-btn" data-spend="music">🎵 Music</button>
+      </div>
+      <span class="muted small" id="spend-hint"></span>
+    </div>
+
+    <section class="card game" id="game-card" aria-labelledby="game-title">
+      <div>
+        <h2 id="game-title">Game time</h2>
+        <p class="muted">Every 5 minutes of studying earns 1 minute of game time.</p>
+      </div>
+      <div class="game-right">
+        <div class="hero" id="game-clock">0:00</div>
+        <button type="button" class="btn btn-primary" id="game-btn">Start game time</button>
+      </div>
+    </section>
+
+    <section class="card music" id="music-card" aria-labelledby="music-title" hidden>
+      <div class="section-head">
+        <div>
+          <h2 id="music-title">Music</h2>
+          <p class="muted">Every 5 minutes of studying earns 1 minute of music.</p>
+        </div>
+        <div class="music-left">
+          <div class="hero" id="music-clock">0:00</div>
+          <div class="muted small">left</div>
+        </div>
+      </div>
+      <div class="now-playing">
+        <div class="muted small">Now playing</div>
+        <div class="now-title" id="now-title">Nothing yet</div>
+        <input type="range" class="seek" id="m-seek" min="0" max="1000" value="0" aria-label="Position in the song" disabled>
+        <div class="muted small now-time" id="now-time"></div>
+        <div class="transport">
+          <button type="button" class="icon-btn" id="m-shuffle" aria-pressed="false" title="Shuffle">🔀</button>
+          <button type="button" class="icon-btn" id="m-prev" title="Previous">⏮</button>
+          <button type="button" class="btn btn-primary" id="m-play">▶ Play</button>
+          <button type="button" class="icon-btn" id="m-next" title="Next">⏭</button>
+          <button type="button" class="icon-btn" id="m-repeat" aria-pressed="false" title="Repeat: off">🔁</button>
+          <label class="volume muted small">Volume
+            <input type="range" id="m-volume" min="0" max="100" step="1">
+          </label>
+        </div>
+        <p class="muted small" id="music-hint"></p>
+        <audio id="audio" preload="auto"></audio>
+      </div>
+      <div class="playlist-bar">
+        <label class="filter">Playlist
+          <select id="pl-select"></select>
+        </label>
+        <button type="button" class="btn btn-small" id="pl-new">+ New</button>
+        <button type="button" class="btn-link btn-small" id="pl-rename">Rename</button>
+        <button type="button" class="btn-link btn-small danger" id="pl-delete">Delete</button>
+      </div>
+      <div class="add-songs">
+        <label class="btn">+ Add songs…
+          <input type="file" id="add-files" multiple hidden
+            accept="audio/*,.mp3,.m4a,.aac,.wav,.flac,.ogg,.oga,.opus,.webm,.aif,.aiff">
+        </label>
+        <label class="btn">Load music folder…
+          <input type="file" id="load-folder" webkitdirectory multiple hidden>
+        </label>
+        <span class="muted small">Or drop music files here. Your files are only used for this visit; nothing is copied or uploaded.</span>
+      </div>
+      <ol id="songs" class="songs"></ol>
+      <p class="muted small">Drag ⋮⋮ to reorder. Click a song to play it. Greyed-out songs need their file loaded this visit.</p>
+    </section>
+
+    <section aria-labelledby="sw-title">
+      <div class="section-head">
+        <h2 id="sw-title">Stopwatches</h2>
+        <button type="button" class="btn btn-primary" id="add-sw-btn">+ Add stopwatch</button>
+      </div>
+      <div id="stopwatches" class="sw-grid"></div>
+      <p id="sw-empty" class="empty" hidden>
+        No stopwatches yet. Add one for each class you're studying for.
+      </p>
+    </section>
+
+    <section class="card" aria-labelledby="streak-title">
+      <div class="section-head">
+        <h2 id="streak-title">Streak</h2>
+        <label class="filter">Show
+          <select id="streak-filter"></select>
+        </label>
+      </div>
+      <div class="tiles">
+        <div class="tile"><div class="tile-label">Current streak</div><div class="tile-value" id="streak-current">0 days</div></div>
+        <div class="tile"><div class="tile-label">Longest streak</div><div class="tile-value" id="streak-longest">0 days</div></div>
+        <div class="tile"><div class="tile-label">Last 365 days</div><div class="tile-value" id="streak-year">0m</div></div>
+      </div>
+      <div class="heatmap-scroll"><svg id="heatmap" role="img" aria-label="Study time per day for the last year"></svg></div>
+      <div class="heat-legend muted">
+        Less
+        <span class="heat-swatch lvl0"></span><span class="heat-swatch lvl1"></span><span class="heat-swatch lvl2"></span><span class="heat-swatch lvl3"></span><span class="heat-swatch lvl4"></span>
+        More <span class="heat-key">(any study · 30m · 1h · 2h+)</span>
+      </div>
+      <p class="muted small">A day counts toward your streak once you study at least 1 minute. Today doesn't break your streak until it's over.</p>
+    </section>
+
+    <section class="card" aria-labelledby="report-title">
+      <div class="section-head">
+        <h2 id="report-title">Study time</h2>
+        <div class="seg" role="group" aria-label="Report range">
+          <button type="button" class="seg-btn" data-mode="day">Day</button>
+          <button type="button" class="seg-btn" data-mode="week">Week</button>
+        </div>
+      </div>
+      <div class="report-nav">
+        <button type="button" class="btn btn-small" id="report-prev" aria-label="Previous">‹</button>
+        <span id="report-range"></span>
+        <button type="button" class="btn btn-small" id="report-next" aria-label="Next">›</button>
+      </div>
+      <div class="report-total">
+        <div class="hero" id="report-total">0m</div>
+        <div class="muted" id="report-sub"></div>
+      </div>
+      <div id="report-chart"></div>
+      <div id="report-legend" class="legend"></div>
+      <table class="report-table" id="report-table">
+        <thead><tr><th scope="col">Class</th><th scope="col" class="num">Time</th><th scope="col" class="num">Share</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="card" aria-labelledby="log-title">
+      <div class="section-head">
+        <h2 id="log-title">Session log</h2>
+        <button type="button" class="btn" id="add-session-btn">+ Add a session</button>
+      </div>
+      <p class="muted small">Forgot to stop or start a stopwatch? Fix it here. Your game time updates to match.</p>
+      <ul id="log" class="log"></ul>
+      <button type="button" class="btn" id="log-more" hidden>Show more</button>
+    </section>
+
+    <section class="card" aria-labelledby="more-title">
+      <h2 id="more-title">Saving &amp; backup</h2>
+      <p class="muted small">Every change saves automatically in this browser. Link a save file to also keep a copy in your project folder.</p>
+      <div class="file-status" id="file-status"></div>
+      <details id="archive-box">
+        <summary>Archived stopwatches (<span id="archive-count">0</span>)</summary>
+        <ul id="archive" class="archive"></ul>
+      </details>
+      <div class="backup">
+        <button type="button" class="btn" id="export-btn">Export backup</button>
+        <label class="btn">Import backup
+          <input type="file" id="import-file" accept="application/json,.json" hidden>
+        </label>
+        <span class="muted small">Importing replaces everything with the backup's contents.</span>
+      </div>
+    </section>
+  </main>
+
+  <div id="tooltip" class="tooltip" hidden></div>
+
+  <dialog id="name-dialog">
+    <form method="dialog" id="name-form">
+      <h2 id="name-title">New stopwatch</h2>
+      <label>Name
+        <input type="text" id="name-input" maxlength="60" required autocomplete="off" placeholder="e.g. Calculus">
+      </label>
+      <p class="form-error" id="name-error"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" value="cancel" id="name-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" value="ok">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="session-dialog">
+    <form method="dialog" id="session-form">
+      <h2 id="session-title">Add a session</h2>
+      <label>Class
+        <select id="session-sw" required></select>
+      </label>
+      <label>Start
+        <input type="datetime-local" id="session-start" required>
+      </label>
+      <label>End
+        <input type="datetime-local" id="session-end" required>
+      </label>
+      <p class="form-error" id="session-error"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="session-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="text-dialog">
+    <form method="dialog" id="text-form">
+      <h2 id="text-title">Rename</h2>
+      <label>Name
+        <input type="text" id="text-input" maxlength="200" required autocomplete="off">
+      </label>
+      <p class="form-error" id="text-error"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn" id="text-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="store.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

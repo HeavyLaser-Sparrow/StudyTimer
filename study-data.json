@@ -1,0 +1,148 @@
+{
+ "app": "study-timer",
+ "version": 1,
+ "saved_ms": 1790291576518,
+ "next_id": 25,
+ "stopwatches": [
+  {
+   "id": 1,
+   "name": "Calc",
+   "archived": false,
+   "created_ms": 1790284593366
+  },
+  {
+   "id": 15,
+   "name": "CWP",
+   "archived": false,
+   "created_ms": 1790290922961
+  },
+  {
+   "id": 17,
+   "name": "MGT",
+   "archived": false,
+   "created_ms": 1790291186378
+  },
+  {
+   "id": 18,
+   "name": "Log",
+   "archived": false,
+   "created_ms": 1790291198996
+  },
+  {
+   "id": 19,
+   "name": "CE",
+   "archived": false,
+   "created_ms": 1790291224390
+  },
+  {
+   "id": 20,
+   "name": "Sec",
+   "archived": false,
+   "created_ms": 1790291238988
+  },
+  {
+   "id": 21,
+   "name": "DxD",
+   "archived": false,
+   "created_ms": 1790291313494
+  },
+  {
+   "id": 22,
+   "name": "BuCS",
+   "archived": false,
+   "created_ms": 1790291416812
+  },
+  {
+   "id": 23,
+   "name": "misc",
+   "archived": false,
+   "created_ms": 1790291497439
+  }
+ ],
+ "sessions": [
+  {
+   "id": 2,
+   "stopwatch_id": 1,
+   "start_ms": 1790284609266,
+   "end_ms": 1790284610366
+  },
+  {
+   "id": 3,
+   "stopwatch_id": 1,
+   "start_ms": 1790284616149,
+   "end_ms": 1790284789198
+  },
+  {
+   "id": 4,
+   "stopwatch_id": 1,
+   "start_ms": 1790284800915,
+   "end_ms": 1790285618198
+  },
+  {
+   "id": 6,
+   "stopwatch_id": 1,
+   "start_ms": 1790285629148,
+   "end_ms": 1790285955814
+  },
+  {
+   "id": 7,
+   "stopwatch_id": 1,
+   "start_ms": 1790286539619,
+   "end_ms": 1790286555769
+  },
+  {
+   "id": 8,
+   "stopwatch_id": 1,
+   "start_ms": 1790286697252,
+   "end_ms": 1790286941701
+  },
+  {
+   "id": 9,
+   "stopwatch_id": 1,
+   "start_ms": 1790286984851,
+   "end_ms": 1790287325016
+  },
+  {
+   "id": 10,
+   "stopwatch_id": 1,
+   "start_ms": 1790287504816,
+   "end_ms": 1790287649249
+  },
+  {
+   "id": 11,
+   "stopwatch_id": 1,
+   "start_ms": 1790287822349,
+   "end_ms": 1790287833115
+  },
+  {
+   "id": 12,
+   "stopwatch_id": 1,
+   "start_ms": 1790287936648,
+   "end_ms": 1790288472163
+  },
+  {
+   "id": 14,
+   "stopwatch_id": 1,
+   "start_ms": 1790288703800,
+   "end_ms": 1790290814022
+  },
+  {
+   "id": 24,
+   "stopwatch_id": 1,
+   "start_ms": 1790291533551,
+   "end_ms": 1790291576518
+  }
+ ],
+ "game_sessions": [
+  {
+   "id": 5,
+   "start_ms": 1790285619615,
+   "end_ms": 1790285627581
+  },
+  {
+   "id": 13,
+   "start_ms": 1790288480947,
+   "end_ms": 1790288678933
+  }
+ ]
+}
